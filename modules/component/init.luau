@@ -115,6 +115,7 @@ type Extension = {
 ]=]
 type ComponentConfig = {
 	Tag: string,
+	AutoSetup: boolean?,
 	Ancestors: AncestorList?,
 	Extensions: { Extension }?,
 }
@@ -188,6 +189,7 @@ local KEY_EXTENSIONS = Symbol("Extensions")
 local KEY_ACTIVE_EXTENSIONS = Symbol("ActiveExtensions")
 local KEY_STARTING = Symbol("Starting")
 local KEY_STARTED = Symbol("Started")
+local KEY_ACTIVATED = Symbol("Activated")
 
 local renderId = 0
 local function NextRenderName(): string
@@ -312,8 +314,13 @@ function Component.new(config: ComponentConfig)
 	customComponent.Tag = config.Tag
 	customComponent.Started = customComponent[KEY_TROVE]:Construct(Signal)
 	customComponent.Stopped = customComponent[KEY_TROVE]:Construct(Signal)
+
 	setmetatable(customComponent, Component)
-	customComponent:_setup()
+
+	if config.AutoSetup then
+		customComponent:_setup()
+	end
+
 	return customComponent
 end
 
@@ -334,6 +341,11 @@ function Component:_instantiate(instance: Instance)
 end
 
 function Component:_setup()
+	if self[KEY_ACTIVATED] then
+		return
+	end
+	self[KEY_ACTIVATED] = true
+
 	local watchingInstances = {}
 
 	local function StartComponent(component)
