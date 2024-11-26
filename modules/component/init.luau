@@ -153,7 +153,7 @@ type ComponentConfig = {
 	@tag Component Instance
 	@within Component
 	@prop Instance Instance
-	
+
 	A reference back to the _Roblox_ instance from within a _component_ instance. When
 	a component instance is created, it is bound to a specific Roblox instance, which
 	will always be present through the `Instance` property.
@@ -291,7 +291,7 @@ Component.__index = Component
 
 	function MyComponent:SteppedUpdate(dt)
 	end
-	
+
 	function MyComponent:RenderSteppedUpdate(dt)
 	end
 	```
@@ -320,6 +320,7 @@ end
 function Component:_instantiate(instance: Instance)
 	local component = setmetatable({}, self)
 	component.Instance = instance
+	component._Trove = Trove.new()
 	component[KEY_ACTIVE_EXTENSIONS] = GetActiveExtensions(component, self[KEY_EXTENSIONS])
 	if not ShouldConstruct(component) then
 		return nil
@@ -417,6 +418,7 @@ function Component:_setup()
 
 		InvokeExtensionFn(component, "Stopping")
 		component:Stop()
+		component._Trove:Destroy()
 		InvokeExtensionFn(component, "Stopped")
 		self.Stopped:Fire(component)
 	end
@@ -684,10 +686,10 @@ end
 	This is a method, not a function. This is a limitation
 	of the documentation tool which should be fixed soon.
 	:::
-	
+
 	```lua
 	local MyComponent = Component.new({Tag = "MyComponent"})
-	
+
 	function MyComponent:HeartbeatUpdate(dt)
 	end
 	```
@@ -705,10 +707,10 @@ end
 	This is a method, not a function. This is a limitation
 	of the documentation tool which should be fixed soon.
 	:::
-	
+
 	```lua
 	local MyComponent = Component.new({Tag = "MyComponent"})
-	
+
 	function MyComponent:SteppedUpdate(dt)
 	end
 	```
@@ -730,23 +732,23 @@ end
 	This is a method, not a function. This is a limitation
 	of the documentation tool which should be fixed soon.
 	:::
-	
+
 	```lua
 	-- Example that uses `RunService.RenderStepped` automatically:
 
 	local MyComponent = Component.new({Tag = "MyComponent"})
-	
+
 	function MyComponent:RenderSteppedUpdate(dt)
 	end
 	```
 	```lua
 	-- Example that uses `RunService:BindToRenderStep` automatically:
-	
+
 	local MyComponent = Component.new({Tag = "MyComponent"})
 
 	-- Defining a RenderPriority will force the component to use BindToRenderStep instead
 	MyComponent.RenderPriority = Enum.RenderPriority.Camera.Value
-	
+
 	function MyComponent:RenderSteppedUpdate(dt)
 	end
 	```

@@ -1,5 +1,5 @@
 [package]
-name = "sleitnick/component"
+name = "azutreo/component"
 description = "Component class"
 version = "2.4.8"
 license = "MIT"
