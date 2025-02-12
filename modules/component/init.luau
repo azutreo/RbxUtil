@@ -327,7 +327,7 @@ end
 function Component:_instantiate(instance: Instance)
 	local component = setmetatable({}, self)
 	component.Instance = instance
-	component._Trove = Trove.new()
+	component.Trove = Trove.new()
 	component[KEY_ACTIVE_EXTENSIONS] = GetActiveExtensions(component, self[KEY_EXTENSIONS])
 	if not ShouldConstruct(component) then
 		return nil
@@ -430,7 +430,7 @@ function Component:_setup()
 
 		InvokeExtensionFn(component, "Stopping")
 		component:Stop()
-		component._Trove:Destroy()
+		component.Trove:Destroy()
 		InvokeExtensionFn(component, "Stopped")
 		self.Stopped:Fire(component)
 	end
